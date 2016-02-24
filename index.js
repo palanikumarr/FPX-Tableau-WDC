@@ -1,3 +1,7 @@
+/**
+* Express based proxy for tableau FPX webdata connector.
+**/
+//TODO: Need to create a token and send that to frontend to manage cookies.
 var express = require('express');
 var request = require('request');
 var app = express();
@@ -9,11 +13,11 @@ app.get('/', function(request, response) {
     response.redirect('/connector.html')
 });
 
+//Proxy for requests having route as proxy. Read the URL parameter and make request to the corresponding URL>
 app.use('/proxy', function(req, res) {
 
     var url = req.url.replace('/?url=', '');
-    console.info (url);
-    
+
     req.pipe(request({
         url : url,
         headers : {
