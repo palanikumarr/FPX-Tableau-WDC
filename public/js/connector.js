@@ -1,3 +1,7 @@
+/**
+* @author Palanikumar Rajendran
+* FPX - Web Data Connector for Tableau.
+**/
 (function() {
     //Show Login Form On Load
     $("div#login-modal").show();
@@ -7,23 +11,26 @@
     });
 })();
 
+//Modularize FPX related code. 
 var FPX = (function(loadCallback) {
 
-    var resultArray = [];
-    var LOG = "";
+    //Configure the FPX API Base URL Endpoint
     var BASE_URL = 'https://sbx.fpx.com/rs/15/cpq';
-    var CURSOR_ID = '',
-        BATCH_SIZE = 500;
+    
+    var resultArray = [], LOG = "", CURSOR_ID = '', BATCH_SIZE = 500;
 
-    // constructs a URL to query FPX's Opportunity table using FPX REST Endpoint
+    // constructs a URL to query FPX's API table using FPX REST Endpoint
     var constructFPXQuery = function() {
         return BASE_URL + "?query=" + encodeURIComponent($("#query").val()) + "&batchsize=" + BATCH_SIZE;
     };
 
-    // constructs a URL to query FPX's Opportunity table using FPX REST Endpoint
+    //FPX API will support only Maximum 500 records per transaction.
+    //So Using the CursorID call the same query again and again until all records fetched.
     var getMoreData = function() {
+        // Hide the error message panel.
         $("#msg1").html("");
         $(".alert").hide();
+
         var queryString = BASE_URL + "?cursor=" + CURSOR_ID;
         $.ajax({
             url: '/proxy?url=' + queryString,
@@ -34,14 +41,16 @@ var FPX = (function(loadCallback) {
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 // If the connection fails, log the error and return an empty set.
-                tableau.log("Connection error: " + xhr.responseText + "\n" + thrownError);
-                tableau.abortWithError("Error while trying to connecto to FPX API");
+                LOG = "Connection error: " + xhr.responseText + "\n" + thrownError;
+                //Show the error div.
                 $("#msg1").html(data.error);
                 $(".alert").show();
             }
         });
     };
 
+    //Common Util method to populate data into resultsArray object. If still data need to fetched then call getMoreData method.
+    //Once all the result is fetched then call the loadCallback method.
     var populateResult = function(data) {
         if (data.records) {
             var records = data.records;
@@ -65,6 +74,7 @@ var FPX = (function(loadCallback) {
     };
 
     return {
+        //FPX public method to Load the FPX data from the Query specified.
         loadFPXData: function() {
             $.ajax({
                 url: '/proxy?url=' + constructFPXQuery(),
@@ -81,6 +91,7 @@ var FPX = (function(loadCallback) {
                 }
             });
         },
+        //FPX public method to Login into FPX API.
         loginFPX: function() {
             //Prepare payload for FPX Login
             var payload = {
@@ -115,18 +126,15 @@ var FPX = (function(loadCallback) {
                     $("#msg").html("Error while trying to connecto to FPX Server");
                 }
             });
-        },
-        testData: function(callback) {
-            callback(JSON.parse(tableau.connectionData));
-        },
-        FPXResultSet: resultArray,
-        FPX_LOG: LOG
+        }
     }
-})(function(results, fieldNames, fieldTypes) {
+    //Callback method for FPX Module. Self calling module.
+})(function(results) {
     tableau.connectionData = JSON.stringify(results);
     tableau.submit();
 });
 
+//Public util method to get the Array from element.
 var getArrayFromInput = function(eleId) {
     return document.getElementById(eleId).value.split(",").map(function(item) {
         return $.trim(item);
