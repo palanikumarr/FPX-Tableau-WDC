@@ -1,7 +1,7 @@
 {
   "name": "node-js-sample",
   "version": "0.2.0",
-  "description": "A sample Node.js app using Express 4",
+  "description": "FPX Web data connector for Tableau",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -19,12 +19,11 @@
   },
   "keywords": [
     "node",
-    "heroku",
     "express"
   ],
-  "author": "Mark Pundsack",
+  "author": "Palanikumar Rajendran",
   "contributors": [
-    "Zeke Sikelianos <zeke@sikelianos.com> (http://zeke.sikelianos.com)"
+    "Palanikumar Rajendran prajendran@splunk.com"
   ],
   "license": "MIT"
 }
