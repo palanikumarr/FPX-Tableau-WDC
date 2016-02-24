@@ -1,0 +1,5 @@
+{
+  "name": "FPX WebData Connector",
+  "description": "Node based FPX WebData Connector using Express 4",
+  "keywords": ["node", "express", "static"]
+}

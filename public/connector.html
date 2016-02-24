@@ -1,0 +1,46 @@
+<html>
+   <meta http-equiv="Cache-Control" content="no-store" />
+   <head>
+      <title>FPX Connector</title>
+      <link href="/css/connector.css"media="all" rel="stylesheet" />
+      <script src="//online.tableau.com/javascripts/api/tableauwdc-1.1.0.js" type="text/javascript"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+   </head>
+   <body style="position: relative;">
+      <div id = "loading-mask" class="mask" style="display: none">
+         <div class="spinner"></div>         
+      </div>
+      <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+         <div class="modal-dialog" >
+            <div class="loginmodal-container" >
+               <h1>Login to Your FPX Account</h1>
+               <br>
+               <div class="alert alert-danger" style="display: none">
+                  <strong>Error!</strong> 
+                  <div id="msg"></div>
+               </div>
+               <input type="text" name="user" id="username" placeholder="Username">
+               <input type="password" name="pass" id="password" placeholder="Password">
+               <input type="submit" id="loginButton" name="login" class="login loginmodal-submit" value="Login"> 
+            </div>
+         </div>
+      </div>
+      <div class="modal fade" id="more-data" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+         <div class="modal-dialog">
+            <div class="more-data-container">
+               <h1> Query and Data Types</h1>
+               <br>
+               <div class="alert alert-danger" style="display: none">
+                  <strong>Error!</strong> 
+                  <div id="msg1"></div>
+               </div>
+               <input type="text" name="query" id="query" placeholder="Query" value="Select CreatedDate, ExternalId, Id, Name from Opportunity">
+               <input type="text" name="fieldNames" id="fieldNames" placeholder="Data Types" value="CreatedDate, ExternalId, Id, Name">
+               <input type="text" name="dataTypes" id="dataTypes" placeholder="Data Types" value="date, string, string, string">
+               <input type="submit" id="moreData" name="moreData" class="login loginmodal-submit" value="Load Data"> 
+            </div>
+         </div>
+      </div>
+      <script type="text/javascript" src="/js/connector.js"></script>
+   </body>
+</html>
