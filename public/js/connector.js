@@ -7,14 +7,19 @@
     $("div#login-modal").show();
 
     $("#loginButton").click(function() {
-        FPX.loginFPX();
+        //Prepare payload for FPX Login
+        var payload = {
+            username: $("#username").val(),
+            password: $("#password").val()
+        };
+        FPX.loginFPX(payload, $("#endPoint").val());
     });
 })();
 
 //Modularize FPX related code. 
 var FPX = (function(loadCallback) {
 
-    //Configure the FPX API Base URL Endpoint
+    //Default FPX API Base URL Endpoint 
     var BASE_URL = 'https://sbx.fpx.com/rs/15/cpq';
     
     var resultArray = [], LOG = "", CURSOR_ID = '', BATCH_SIZE = 500;
@@ -92,12 +97,8 @@ var FPX = (function(loadCallback) {
             });
         },
         //FPX public method to Login into FPX API.
-        loginFPX: function() {
-            //Prepare payload for FPX Login
-            var payload = {
-                username: $("#username").val(),
-                password: $("#password").val()
-            };
+        loginFPX: function (payload, endPoint) {
+            BASE_URL = endPoint;
             $("#loading-mask").show();
             var LOGIN_URL = BASE_URL + '/login';
             //Make AJAX call to FPX Rest API
@@ -130,7 +131,14 @@ var FPX = (function(loadCallback) {
     }
     //Callback method for FPX Module. Self calling module.
 })(function(results) {
-    tableau.connectionData = JSON.stringify(results);
+    
+    var fieldNames = getArrayFromInput('fieldNames');
+    var fieldTypes = getArrayFromInput('dataTypes');
+    var conData = {};
+    conData.fieldNames = fieldNames;
+    conData.fieldTypes = fieldTypes;
+    conData.results = results;
+    tableau.connectionData = JSON.stringify(conData);
     tableau.submit();
 });
 
@@ -151,13 +159,13 @@ FPXConnector.init = function() {
 };
 
 FPXConnector.getColumnHeaders = function() {
-    var fieldNames = getArrayFromInput('fieldNames');
-    var fieldTypes = getArrayFromInput('dataTypes');
-    tableau.headersCallback(fieldNames, fieldTypes);
+    var conData = JSON.parse(tableau.connectionData);
+    tableau.headersCallback(conData.fieldNames, conData.fieldTypes);
 };
 
 FPXConnector.getTableData = function(lastRecordToken) {
-    tableau.dataCallback(JSON.parse(tableau.connectionData), lastRecordToken, false);
+    var conData = JSON.parse(tableau.connectionData);
+    tableau.dataCallback(conData.results, lastRecordToken, false);
 };
 
 tableau.registerConnector(FPXConnector);
